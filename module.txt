@@ -1,10 +1,12 @@
 {
     "id" : "Explosives",
-    "version" : "0.1.0",
+    "version" : "1.0.0",
     "author" : "The Terasology Foundation",
     "displayName" : "Explosives",
     "description" : "A library module for letting things explode.",
-    "dependencies" : [],
+    "dependencies" : [
+        { "id": "Health", "minVersion": "0.1.0" }
+    ],
     "serverSideOnly" : false,
     "isLibrary": true
 }
