@@ -1,6 +1,7 @@
 {
     "id" : "Explosives",
     "version" : "1.0.0",
+    "isReleaseManaged": true,
     "author" : "The Terasology Foundation",
     "displayName" : "Explosives",
     "description" : "A library module for letting things explode.",
