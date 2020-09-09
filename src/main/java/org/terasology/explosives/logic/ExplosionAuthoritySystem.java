@@ -1,47 +1,34 @@
-/*
- * Copyright 2020 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.explosives.logic;
 
 import com.google.common.collect.Lists;
-import org.terasology.audio.StaticSound;
-import org.terasology.audio.events.PlaySoundEvent;
-import org.terasology.entitySystem.entity.EntityBuilder;
-import org.terasology.entitySystem.entity.EntityManager;
-import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.entitySystem.event.ReceiveEvent;
-import org.terasology.entitySystem.systems.BaseComponentSystem;
-import org.terasology.entitySystem.systems.RegisterMode;
-import org.terasology.entitySystem.systems.RegisterSystem;
-import org.terasology.logic.common.ActivateEvent;
-import org.terasology.logic.delay.DelayManager;
-import org.terasology.logic.delay.DelayedActionTriggeredEvent;
-import org.terasology.logic.health.event.DoDamageEvent;
-import org.terasology.logic.inventory.ItemComponent;
-import org.terasology.logic.location.LocationComponent;
+import org.terasology.engine.audio.StaticSound;
+import org.terasology.engine.audio.events.PlaySoundEvent;
+import org.terasology.engine.entitySystem.entity.EntityBuilder;
+import org.terasology.engine.entitySystem.entity.EntityManager;
+import org.terasology.engine.entitySystem.entity.EntityRef;
+import org.terasology.engine.entitySystem.event.ReceiveEvent;
+import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
+import org.terasology.engine.entitySystem.systems.RegisterMode;
+import org.terasology.engine.entitySystem.systems.RegisterSystem;
+import org.terasology.engine.logic.common.ActivateEvent;
+import org.terasology.engine.logic.delay.DelayManager;
+import org.terasology.engine.logic.delay.DelayedActionTriggeredEvent;
+import org.terasology.engine.logic.inventory.ItemComponent;
+import org.terasology.engine.logic.location.LocationComponent;
+import org.terasology.engine.registry.In;
+import org.terasology.engine.utilities.Assets;
+import org.terasology.engine.utilities.random.FastRandom;
+import org.terasology.engine.utilities.random.Random;
+import org.terasology.engine.world.BlockEntityRegistry;
+import org.terasology.engine.world.WorldProvider;
+import org.terasology.engine.world.block.Block;
+import org.terasology.engine.world.block.BlockComponent;
+import org.terasology.engine.world.block.BlockManager;
+import org.terasology.health.logic.event.DoDamageEvent;
 import org.terasology.math.geom.Vector3f;
 import org.terasology.math.geom.Vector3i;
-import org.terasology.registry.In;
-import org.terasology.utilities.Assets;
-import org.terasology.utilities.random.FastRandom;
-import org.terasology.utilities.random.Random;
-import org.terasology.world.BlockEntityRegistry;
-import org.terasology.world.WorldProvider;
-import org.terasology.world.block.Block;
-import org.terasology.world.block.BlockComponent;
-import org.terasology.world.block.BlockManager;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,24 +36,18 @@ import java.util.Optional;
 @RegisterSystem(RegisterMode.AUTHORITY)
 public class ExplosionAuthoritySystem extends BaseComponentSystem {
     public static final String DELAYED_EXPLOSION_ACTION_ID = "Delayed Explosion";
-
+    private final Random random = new FastRandom();
+    private final List<Optional<StaticSound>> explosionSounds = Lists.newArrayList();
     @In
     private WorldProvider worldProvider;
-
     @In
     private BlockEntityRegistry blockEntityRegistry;
-
     @In
     private EntityManager entityManager;
-
     @In
     private BlockManager blockManager;
-
     @In
     private DelayManager delayManager;
-
-    private Random random = new FastRandom();
-    private List<Optional<StaticSound>> explosionSounds = Lists.newArrayList();
 
     @Override
     public void initialise() {
@@ -83,7 +64,7 @@ public class ExplosionAuthoritySystem extends BaseComponentSystem {
         switch (explosionComp.relativeTo) {
             case Self:
                 LocationComponent loc = entity.getComponent(LocationComponent.class);
-                if (loc != null&& !Float.isNaN(loc.getWorldPosition().x)) {
+                if (loc != null && !Float.isNaN(loc.getWorldPosition().x)) {
                     origin = loc.getWorldPosition();
                 }
                 break;
@@ -131,7 +112,8 @@ public class ExplosionAuthoritySystem extends BaseComponentSystem {
                     EntityRef blockEntity = blockEntityRegistry.getEntityAt(blockPos);
                     // allow explosions to chain together,  but do not chain on the instigating block
                     if (!blockEntity.equals(instigatingBlockEntity) && blockEntity.hasComponent(ExplosionActionComponent.class)) {
-                        doExplosion(blockEntity.getComponent(ExplosionActionComponent.class), blockPos.toVector3f(), blockEntity);
+                        doExplosion(blockEntity.getComponent(ExplosionActionComponent.class), blockPos.toVector3f(),
+                                blockEntity);
                     } else {
                         blockEntity.send(new DoDamageEvent(explosionComp.damageAmount, explosionComp.damageType));
                     }
@@ -141,7 +123,8 @@ public class ExplosionAuthoritySystem extends BaseComponentSystem {
     }
 
     @ReceiveEvent(components = ItemComponent.class)
-    public void onActivateFuseOnBlock(ActivateEvent event, EntityRef entityRef, TimedExplosionComponent timedExplosionComponent) {
+    public void onActivateFuseOnBlock(ActivateEvent event, EntityRef entityRef,
+                                      TimedExplosionComponent timedExplosionComponent) {
         if (event.getTarget().hasComponent(BlockComponent.class) && event.getTarget().hasComponent(ExplosionActionComponent.class)
                 && !event.getTarget().hasComponent(TimedExplosionComponent.class)) {
             Optional<StaticSound> fuseBurningSound = Assets.getSound("CoreAssets:FuseBurning");
@@ -151,13 +134,14 @@ public class ExplosionAuthoritySystem extends BaseComponentSystem {
             // add a timed explosion to the block so that it stays active
             event.getTarget().addComponent(new TimedExplosionComponent());
 
-            delayManager.addDelayedAction(event.getTarget(), DELAYED_EXPLOSION_ACTION_ID, timedExplosionComponent.fuseTimeMs);
+            delayManager.addDelayedAction(event.getTarget(), DELAYED_EXPLOSION_ACTION_ID,
+                    timedExplosionComponent.fuseTimeMs);
         }
     }
 
     @ReceiveEvent
     public void onDelayedExplosion(DelayedActionTriggeredEvent event, EntityRef entityRef,
-                                    ExplosionActionComponent explosionActionComponent) {
+                                   ExplosionActionComponent explosionActionComponent) {
         if (event.getActionId().equals(DELAYED_EXPLOSION_ACTION_ID)) {
             //check if the exploding entity is a block or not
             if (entityRef.hasComponent(BlockComponent.class)) {
