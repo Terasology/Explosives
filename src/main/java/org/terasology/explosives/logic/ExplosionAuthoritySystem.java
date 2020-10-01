@@ -31,6 +31,7 @@ import org.terasology.logic.delay.DelayedActionTriggeredEvent;
 import org.terasology.logic.health.event.DoDamageEvent;
 import org.terasology.logic.inventory.ItemComponent;
 import org.terasology.logic.location.LocationComponent;
+import org.terasology.math.JomlUtil;
 import org.terasology.math.geom.Vector3f;
 import org.terasology.math.geom.Vector3i;
 import org.terasology.registry.In;
@@ -88,10 +89,10 @@ public class ExplosionAuthoritySystem extends BaseComponentSystem {
                 }
                 break;
             case Instigator:
-                origin = event.getInstigatorLocation();
+                origin = JomlUtil.from(event.getInstigatorLocation());
                 break;
             default:
-                origin = event.getTargetLocation();
+                origin = JomlUtil.from(event.getTargetLocation());
                 break;
         }
 
