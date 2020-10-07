@@ -84,8 +84,11 @@ public class ExplosionAuthoritySystem extends BaseComponentSystem {
         switch (explosionComp.relativeTo) {
             case Self:
                 LocationComponent loc = entity.getComponent(LocationComponent.class);
-                if (loc != null&& !Float.isNaN(loc.getWorldPosition().x)) {
-                    loc.getWorldPosition(origin);
+                if (loc != null) {
+                    origin = loc.getWorldPosition(new Vector3f());
+                    if (!origin.isFinite()) {
+                        origin = null;
+                    }
                 }
                 break;
             case Instigator:
@@ -145,7 +148,7 @@ public class ExplosionAuthoritySystem extends BaseComponentSystem {
     @ReceiveEvent(components = ItemComponent.class)
     public void onActivateFuseOnBlock(ActivateEvent event, EntityRef entityRef, TimedExplosionComponent timedExplosionComponent) {
         if (event.getTarget().hasComponent(BlockComponent.class) && event.getTarget().hasComponent(ExplosionActionComponent.class)
-                && !event.getTarget().hasComponent(TimedExplosionComponent.class)) {
+            && !event.getTarget().hasComponent(TimedExplosionComponent.class)) {
             Optional<StaticSound> fuseBurningSound = Assets.getSound("CoreAssets:FuseBurning");
             if (fuseBurningSound.isPresent()) {
                 event.getTarget().send(new PlaySoundEvent(fuseBurningSound.get(), 1f));
