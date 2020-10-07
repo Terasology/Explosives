@@ -32,8 +32,8 @@ import org.terasology.logic.health.event.DoDamageEvent;
 import org.terasology.logic.inventory.ItemComponent;
 import org.terasology.logic.location.LocationComponent;
 import org.terasology.math.JomlUtil;
-import org.terasology.math.geom.Vector3f;
-import org.terasology.math.geom.Vector3i;
+import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.terasology.registry.In;
 import org.terasology.utilities.Assets;
 import org.terasology.utilities.random.FastRandom;
@@ -84,15 +84,18 @@ public class ExplosionAuthoritySystem extends BaseComponentSystem {
         switch (explosionComp.relativeTo) {
             case Self:
                 LocationComponent loc = entity.getComponent(LocationComponent.class);
-                if (loc != null&& !Float.isNaN(loc.getWorldPosition().x)) {
-                    origin = loc.getWorldPosition();
+                if (loc != null) {
+                    origin = loc.getWorldPosition(new Vector3f());
+                    if (!origin.isFinite()) {
+                        origin = null;
+                    }
                 }
                 break;
             case Instigator:
-                origin = JomlUtil.from(event.getInstigatorLocation());
+                origin = event.getInstigatorLocation();
                 break;
             default:
-                origin = JomlUtil.from(event.getTargetLocation());
+                origin = event.getTargetLocation();
                 break;
         }
 
@@ -116,7 +119,8 @@ public class ExplosionAuthoritySystem extends BaseComponentSystem {
 
         Vector3i blockPos = new Vector3i();
         for (int i = 0; i < explosionComp.maxRange; i++) {
-            Vector3f direction = random.nextVector3f(1.0f);
+            Vector3f direction = new Vector3f();
+            random.nextVector3f(1.0f, direction);
 
             for (int j = 0; j < 4; j++) {
                 Vector3f target = new Vector3f(origin);
@@ -132,7 +136,7 @@ public class ExplosionAuthoritySystem extends BaseComponentSystem {
                     EntityRef blockEntity = blockEntityRegistry.getEntityAt(blockPos);
                     // allow explosions to chain together,  but do not chain on the instigating block
                     if (!blockEntity.equals(instigatingBlockEntity) && blockEntity.hasComponent(ExplosionActionComponent.class)) {
-                        doExplosion(blockEntity.getComponent(ExplosionActionComponent.class), blockPos.toVector3f(), blockEntity);
+                        doExplosion(blockEntity.getComponent(ExplosionActionComponent.class), new Vector3f(blockPos), blockEntity);
                     } else {
                         blockEntity.send(new DoDamageEvent(explosionComp.damageAmount, explosionComp.damageType));
                     }
@@ -144,7 +148,7 @@ public class ExplosionAuthoritySystem extends BaseComponentSystem {
     @ReceiveEvent(components = ItemComponent.class)
     public void onActivateFuseOnBlock(ActivateEvent event, EntityRef entityRef, TimedExplosionComponent timedExplosionComponent) {
         if (event.getTarget().hasComponent(BlockComponent.class) && event.getTarget().hasComponent(ExplosionActionComponent.class)
-                && !event.getTarget().hasComponent(TimedExplosionComponent.class)) {
+            && !event.getTarget().hasComponent(TimedExplosionComponent.class)) {
             Optional<StaticSound> fuseBurningSound = Assets.getSound("CoreAssets:FuseBurning");
             if (fuseBurningSound.isPresent()) {
                 event.getTarget().send(new PlaySoundEvent(fuseBurningSound.get(), 1f));
@@ -166,10 +170,11 @@ public class ExplosionAuthoritySystem extends BaseComponentSystem {
                 // always destroy the block that caused the explosion
                 worldProvider.setBlock(blockComponent.position, blockManager.getBlock(BlockManager.AIR_ID));
                 // create the explosion from the block's location
-                doExplosion(explosionActionComponent, blockComponent.position.toVector3f(), entityRef);
+                doExplosion(explosionActionComponent, new Vector3f(JomlUtil.from(blockComponent.position)), entityRef);
             } else if (entityRef.hasComponent(LocationComponent.class)) {
                 // get the position of the non-block entity to make it explode from there
-                Vector3f position = entityRef.getComponent(LocationComponent.class).getWorldPosition();
+                Vector3f position = new Vector3f();
+                entityRef.getComponent(LocationComponent.class).getWorldPosition(position);
                 // destroy the non-block entity
                 entityRef.destroy();
                 // create the explosion from the non-block entity location

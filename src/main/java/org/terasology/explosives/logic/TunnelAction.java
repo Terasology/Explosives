@@ -26,8 +26,8 @@ import org.terasology.logic.common.ActivateEvent;
 import org.terasology.logic.health.event.DoDamageEvent;
 import org.terasology.logic.location.LocationComponent;
 import org.terasology.math.JomlUtil;
-import org.terasology.math.geom.Vector3f;
-import org.terasology.math.geom.Vector3i;
+import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.terasology.physics.Physics;
 import org.terasology.registry.In;
 import org.terasology.utilities.random.FastRandom;
@@ -63,9 +63,9 @@ public class TunnelAction extends BaseComponentSystem {
     @ReceiveEvent
     public void onActivate(ActivateEvent event, EntityRef entity, TunnelActionComponent tunnelActionComponent) {
 
-        Vector3f dir = new Vector3f(JomlUtil.from(event.getDirection()));
-        dir.scale(4.0f);
-        Vector3f origin = new Vector3f(JomlUtil.from(event.getOrigin()));
+        Vector3f dir = new Vector3f(event.getDirection());
+        dir.mul(4.0f);
+        Vector3f origin = new Vector3f(event.getOrigin());
         origin.add(dir);
         Vector3i blockPos = new Vector3i();
 
@@ -78,9 +78,10 @@ public class TunnelAction extends BaseComponentSystem {
             }
 
             for (int i = 0; i < tunnelActionComponent.maxRaysCast; i++) {
-                Vector3f direction = random.nextVector3f();
+                Vector3f direction = new Vector3f();
+                random.nextVector3f(direction);
                 Vector3f impulse = new Vector3f(direction);
-                impulse.scale(tunnelActionComponent.explosiveForce);
+                impulse.mul(tunnelActionComponent.explosiveForce);
 
                 for (int j = 0; j < 3; j++) {
                     Vector3f target = new Vector3f(origin);
