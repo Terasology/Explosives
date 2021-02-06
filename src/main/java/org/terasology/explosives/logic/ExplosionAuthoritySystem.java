@@ -1,21 +1,10 @@
-/*
- * Copyright 2020 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.explosives.logic;
 
 import com.google.common.collect.Lists;
+import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.terasology.audio.StaticSound;
 import org.terasology.audio.events.PlaySoundEvent;
 import org.terasology.entitySystem.entity.EntityBuilder;
@@ -31,9 +20,6 @@ import org.terasology.logic.delay.DelayedActionTriggeredEvent;
 import org.terasology.logic.health.event.DoDamageEvent;
 import org.terasology.logic.inventory.ItemComponent;
 import org.terasology.logic.location.LocationComponent;
-import org.terasology.math.JomlUtil;
-import org.joml.Vector3f;
-import org.joml.Vector3i;
 import org.terasology.registry.In;
 import org.terasology.utilities.Assets;
 import org.terasology.utilities.random.FastRandom;
@@ -168,9 +154,9 @@ public class ExplosionAuthoritySystem extends BaseComponentSystem {
             if (entityRef.hasComponent(BlockComponent.class)) {
                 BlockComponent blockComponent = entityRef.getComponent(BlockComponent.class);
                 // always destroy the block that caused the explosion
-                worldProvider.setBlock(blockComponent.position, blockManager.getBlock(BlockManager.AIR_ID));
+                worldProvider.setBlock(blockComponent.getPosition(), blockManager.getBlock(BlockManager.AIR_ID));
                 // create the explosion from the block's location
-                doExplosion(explosionActionComponent, new Vector3f(JomlUtil.from(blockComponent.position)), entityRef);
+                doExplosion(explosionActionComponent, new Vector3f(blockComponent.getPosition()), entityRef);
             } else if (entityRef.hasComponent(LocationComponent.class)) {
                 // get the position of the non-block entity to make it explode from there
                 Vector3f position = new Vector3f();
