@@ -15,6 +15,8 @@
  */
 package org.terasology.explosives.logic;
 
+import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.terasology.entitySystem.entity.EntityBuilder;
 import org.terasology.entitySystem.entity.EntityManager;
 import org.terasology.entitySystem.entity.EntityRef;
@@ -25,9 +27,6 @@ import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.logic.common.ActivateEvent;
 import org.terasology.logic.health.event.DoDamageEvent;
 import org.terasology.logic.location.LocationComponent;
-import org.terasology.math.JomlUtil;
-import org.joml.Vector3f;
-import org.joml.Vector3i;
 import org.terasology.physics.Physics;
 import org.terasology.registry.In;
 import org.terasology.utilities.random.FastRandom;
