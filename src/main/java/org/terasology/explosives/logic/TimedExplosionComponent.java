@@ -15,8 +15,8 @@
  */
 package org.terasology.explosives.logic;
 
-import org.terasology.entitySystem.Component;
-import org.terasology.world.block.ForceBlockActive;
+import org.terasology.engine.entitySystem.Component;
+import org.terasology.engine.world.block.ForceBlockActive;
 
 // force block active so that we can put this on a block while waiting for the explosion
 @ForceBlockActive

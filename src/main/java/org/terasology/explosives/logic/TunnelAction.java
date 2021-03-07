@@ -17,23 +17,23 @@ package org.terasology.explosives.logic;
 
 import org.joml.Vector3f;
 import org.joml.Vector3i;
-import org.terasology.entitySystem.entity.EntityBuilder;
-import org.terasology.entitySystem.entity.EntityManager;
-import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.entitySystem.event.ReceiveEvent;
-import org.terasology.entitySystem.systems.BaseComponentSystem;
-import org.terasology.entitySystem.systems.RegisterMode;
-import org.terasology.entitySystem.systems.RegisterSystem;
-import org.terasology.logic.common.ActivateEvent;
-import org.terasology.logic.health.event.DoDamageEvent;
-import org.terasology.logic.location.LocationComponent;
-import org.terasology.physics.Physics;
-import org.terasology.registry.In;
-import org.terasology.utilities.random.FastRandom;
-import org.terasology.utilities.random.Random;
-import org.terasology.world.BlockEntityRegistry;
-import org.terasology.world.WorldProvider;
-import org.terasology.world.block.Block;
+import org.terasology.engine.entitySystem.entity.EntityBuilder;
+import org.terasology.engine.entitySystem.entity.EntityManager;
+import org.terasology.engine.entitySystem.entity.EntityRef;
+import org.terasology.engine.entitySystem.event.ReceiveEvent;
+import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
+import org.terasology.engine.entitySystem.systems.RegisterMode;
+import org.terasology.engine.entitySystem.systems.RegisterSystem;
+import org.terasology.engine.logic.common.ActivateEvent;
+import org.terasology.engine.logic.health.event.DoDamageEvent;
+import org.terasology.engine.logic.location.LocationComponent;
+import org.terasology.engine.physics.Physics;
+import org.terasology.engine.registry.In;
+import org.terasology.engine.utilities.random.FastRandom;
+import org.terasology.engine.utilities.random.Random;
+import org.terasology.engine.world.BlockEntityRegistry;
+import org.terasology.engine.world.WorldProvider;
+import org.terasology.engine.world.block.Block;
 
 @RegisterSystem(RegisterMode.AUTHORITY)
 public class TunnelAction extends BaseComponentSystem {
