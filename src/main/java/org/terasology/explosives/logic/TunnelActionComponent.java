@@ -17,7 +17,7 @@ package org.terasology.explosives.logic;
 
 import org.terasology.engine.entitySystem.Component;
 import org.terasology.engine.entitySystem.prefab.Prefab;
-import org.terasology.engine.logic.health.EngineDamageTypes;
+import org.terasology.logic.health.EngineDamageTypes;
 
 /**
  */
