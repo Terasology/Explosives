@@ -15,13 +15,13 @@
  */
 package org.terasology.explosives.logic;
 
-import org.terasology.engine.entitySystem.Component;
 import org.terasology.engine.entitySystem.prefab.Prefab;
 import org.terasology.engine.logic.health.EngineDamageTypes;
+import org.terasology.gestalt.entitysystem.component.Component;
 
 /**
  */
-public class TunnelActionComponent implements Component {
+public class TunnelActionComponent implements Component<TunnelActionComponent> {
     /**
      * The most blocks that can be destroyed before the action ends (counts duplicates, so actually way lower)
      */
@@ -54,4 +54,15 @@ public class TunnelActionComponent implements Component {
     public float explosiveForce = 200f;
 
 
+    @Override
+    public void copy(TunnelActionComponent other) {
+        this.maxDestroyedBlocks = other.maxDestroyedBlocks;
+        this.maxParticalEffects = other.maxParticalEffects;
+        this.maxTunnelDepth = other.maxTunnelDepth;
+        this.maxRaysCast = other.maxRaysCast;
+        this.damageAmount = other.damageAmount;
+        this.damageType = other.damageType;
+        this.thoroughness = other.thoroughness;
+        this.explosiveForce = other.explosiveForce;
+    }
 }
