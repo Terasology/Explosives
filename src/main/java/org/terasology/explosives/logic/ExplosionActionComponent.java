@@ -16,7 +16,7 @@ public class ExplosionActionComponent implements Component<ExplosionActionCompon
     public int maxRange = 64;
 
     @Override
-    public void copy(ExplosionActionComponent other) {
+    public void copyFrom(ExplosionActionComponent other) {
         this.relativeTo = other.relativeTo;
         this.damageAmount = other.damageAmount;
         this.damageType = other.damageType;
