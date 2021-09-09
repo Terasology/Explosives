@@ -17,7 +17,6 @@ import org.terasology.engine.entitySystem.systems.RegisterSystem;
 import org.terasology.engine.logic.common.ActivateEvent;
 import org.terasology.engine.logic.delay.DelayManager;
 import org.terasology.engine.logic.delay.DelayedActionTriggeredEvent;
-import org.terasology.module.health.events.DoDamageEvent;
 import org.terasology.engine.logic.inventory.ItemComponent;
 import org.terasology.engine.logic.location.LocationComponent;
 import org.terasology.engine.registry.In;
@@ -29,6 +28,7 @@ import org.terasology.engine.world.WorldProvider;
 import org.terasology.engine.world.block.Block;
 import org.terasology.engine.world.block.BlockComponent;
 import org.terasology.engine.world.block.BlockManager;
+import org.terasology.module.health.events.DoDamageEvent;
 
 import java.util.List;
 import java.util.Optional;
