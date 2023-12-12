@@ -6,8 +6,6 @@ import org.terasology.engine.entitySystem.prefab.Prefab;
 import org.terasology.engine.logic.health.EngineDamageTypes;
 import org.terasology.gestalt.entitysystem.component.Component;
 
-/**
- */
 public class TunnelActionComponent implements Component<TunnelActionComponent> {
     /**
      * The most blocks that can be destroyed before the action ends (counts duplicates, so actually way lower)

@@ -7,8 +7,6 @@ import org.terasology.engine.logic.actions.ActionTarget;
 import org.terasology.engine.logic.health.EngineDamageTypes;
 import org.terasology.gestalt.entitysystem.component.Component;
 
-/**
- */
 public class ExplosionActionComponent implements Component<ExplosionActionComponent> {
     public ActionTarget relativeTo = ActionTarget.Instigator;
     public int damageAmount = 1000;
